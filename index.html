@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Fee Status</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; }
+        .container { max-width: 500px; margin: auto; text-align: center; }
+        .form-group { margin: 20px 0; }
+        input[type="text"] { padding: 10px; width: 80%; }
+        button { padding: 10px 20px; background-color: #4CAF50; color: white; border: none; cursor: pointer; }
+        .response { margin-top: 20px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Student Fee Status</h2>
+        <div class="form-group">
+            <label for="student_id">Enter Your Student ID:</label>
+            <input type="text" id="student_id" placeholder="Student ID">
+        </div>
+        <button onclick="getFeeStatus()">Check Fee Status</button>
+
+        <div class="response" id="response"></div>
+    </div>
+
+    <script>
+        async function getFeeStatus() {
+            const studentId = document.getElementById('student_id').value;
+            if (!studentId) {
+                document.getElementById('response').innerHTML = 'Please enter your Student ID.';
+                return;
+            }
+
+            const apiUrl = `https://<your-function-app>.azurewebsites.net/api/http_trigger?student_id=${studentId}`;
+
+            try {
+                const response = await fetch(apiUrl);
+                const data = await response.json();
+                
+                if (response.status === 200) {
+                    document.getElementById('response').innerHTML = `
+                        <h3>Hello, ${data.Name}!</h3>
+                        <p>Status: ${data.Status}</p>
+                    `;
+                } else {
+                    document.getElementById('response').innerHTML = data.error || 'An error occurred while fetching your fee status.';
+                }
+            } catch (error) {
+                document.getElementById('response').innerHTML = 'Error communicating with the server.';
+            }
+        }
+    </script>
+</body>
+</html>
+
